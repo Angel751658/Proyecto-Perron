@@ -3,6 +3,7 @@ a = 1
 b = 0
 
 
+
 print(a+b)
 
 for i in range(n):
@@ -13,6 +14,7 @@ for i in range(n):
     print(c)
 
 print("FIN")
+
 
 
 
