@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
 const {
     registerUser,
     loginUser,
@@ -9,12 +8,13 @@ const {
 
 const { isAuthenticated, isAdmin } = require('../middleware/authMiddleware');
 
-// Ruta pública
+// Registro público
 router.post('/register', registerUser);
+
+// Login público
 router.post('/login', loginUser);
 
-// Ruta protegida (solo admin puede ver todos los usuarios)
+// Obtener todos los usuarios (solo admin autenticado)
 router.get('/', isAuthenticated, isAdmin, getUsers);
 
 module.exports = router;
-
