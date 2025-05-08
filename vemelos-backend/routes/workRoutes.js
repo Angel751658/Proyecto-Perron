@@ -8,19 +8,16 @@ const {
     deleteWork
 } = require('../controllers/workController');
 
-// Obtener todas las obras
-router.get('/', getAllWorks);
+const { isAuthenticated, isAdmin } = require('../middleware/authMiddleware');
 
-// Obtener una obra por ID
+// Públicas
+router.get('/', getAllWorks);
 router.get('/:id', getWorkById);
 
-// Crear nueva obra
-router.post('/', createWork);
-
-// Editar obra
-router.put('/:id', updateWork);
-
-// Eliminar obra
-router.delete('/:id', deleteWork);
+// Protegidas (solo admin)
+router.post('/', isAuthenticated, isAdmin, createWork);
+router.put('/:id', isAuthenticated, isAdmin, updateWork);
+router.delete('/:id', isAuthenticated, isAdmin, deleteWork);
 
 module.exports = router;
+

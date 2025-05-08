@@ -1,18 +1,20 @@
 const express = require('express');
 const router = express.Router();
+
 const {
     registerUser,
     loginUser,
     getUsers
 } = require('../controllers/userController');
 
-// Registro
-router.post('/register', registerUser);
+const { isAuthenticated, isAdmin } = require('../middleware/authMiddleware');
 
-// Login
+// Ruta pública
+router.post('/register', registerUser);
 router.post('/login', loginUser);
 
-// Obtener todos los usuarios (puede protegerse más adelante con middleware de admin)
-router.get('/', getUsers);
+// Ruta protegida (solo admin puede ver todos los usuarios)
+router.get('/', isAuthenticated, isAdmin, getUsers);
 
 module.exports = router;
+
