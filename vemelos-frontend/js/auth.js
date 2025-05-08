@@ -35,3 +35,25 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
         window.location.href = 'index.html';
     }
 });
+
+// Verificar si el usuario es admin y mostrar botones especiales
+window.addEventListener('DOMContentLoaded', () => {
+    const email = localStorage.getItem('userEmail');
+    const adminOptions = document.getElementById('admin-options');
+    if (!email || !adminOptions) return;
+  
+    fetch('http://localhost:5000/api/users', {
+      headers: { 'x-user-email': email }
+    })
+      .then(res => res.json())
+      .then(users => {
+        const user = users.find(u => u.email === email);
+        if (user?.isAdmin) {
+          adminOptions.innerHTML = `
+            <a href="admin.html" class="btn btn-outline-danger me-2">Panel Admin</a>
+            <a href="create.html" class="btn btn-outline-warning">Nueva Obra</a>
+          `;
+        }
+      });
+  });
+  
