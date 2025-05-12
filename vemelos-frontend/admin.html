@@ -8,6 +8,55 @@
 </head>
 
 <body class="container mt-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">VEMELOS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav" id="navLinks">
+                    <!-- Enlaces dinámicos aquí -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        const email = localStorage.getItem('userEmail');
+        const nav = document.getElementById('navLinks');
+
+        if (email) {
+            // Enlaces para usuarios logueados
+            nav.innerHTML += `
+      <li class="nav-item"><a class="nav-link" href="favorites.html">Favoritos</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
+    `;
+            // Verificar si es admin
+            fetch('http://localhost:5000/api/users', {
+                headers: { 'x-user-email': email }
+            })
+                .then(res => res.json())
+                .then(users => {
+                    const user = users.find(u => u.email === email);
+                    if (user?.isAdmin) {
+                        nav.innerHTML += `<li class="nav-item"><a class="nav-link" href="admin.html">Panel Admin</a></li>`;
+                    }
+                });
+        } else {
+            // Enlaces públicos
+            nav.innerHTML += `
+      <li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
+      <li class="nav-item"><a class="nav-link" href="register.html">Registrarse</a></li>
+    `;
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+    </script>
+
     <h2>Panel del Administrador</h2>
     <div class="text-end mb-3">
         <a href="create.html" class="btn btn-success">Agregar Nueva Obra</a>
