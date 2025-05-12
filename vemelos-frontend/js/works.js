@@ -10,14 +10,14 @@ if (location.pathname.includes('search.html')) {
             obras.filter(o => !q || o.titulo.toLowerCase().includes(q.toLowerCase()))
                 .forEach(o => {
                     contenedor.innerHTML += `
-                    <div class="col-md-4 mb-3">
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="card h-100">
                             <img src="${o.imagenUrl}" class="card-img-top" alt="${o.titulo}" style="height: 300px; object-fit: cover;">
                             <div class="card-body">
                                 <h5 class="card-title">${o.titulo}</h5>
                                 <p class="card-text">${o.descripcion?.substring(0, 100) || 'Sin descripción'}...</p>
                                 <ul class="list-unstyled small">
-                                    <li><strong>Autor:</strong> ${o.autor || 'N/A'}</li>
+                                    <li><strong>Autor(es):</strong> ${o.autor || 'N/A'}</li>
                                     <li><strong>Idioma:</strong> ${o.idioma || 'N/A'}</li>
                                     <li><strong>Páginas:</strong> ${o.numeroPaginas || 'N/A'}</li>
                                     <li><strong>ISBN:</strong> ${o.isbn || 'N/A'}</li>
@@ -42,13 +42,13 @@ if (location.pathname.includes('details.html')) {
         .then(obra => {
             const cont = document.getElementById('work-details');
             cont.innerHTML = `
-            <div class="card">
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                 <img src="${obra.imagenUrl}" class="card-img-top" alt="${obra.titulo}" style="max-height: 400px; object-fit: cover;">
                 <div class="card-body">
                 <h3 class="card-title">${obra.titulo}</h3>
                 <p class="card-text">${obra.descripcion}</p>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><strong>Autor:</strong> ${obra.autor}</li>
+                    <li class="list-group-item"><strong>Autor(es):</strong> ${obra.autor}</li>
                     <li class="list-group-item"><strong>Idioma:</strong> ${obra.idioma}</li>
                     <li class="list-group-item"><strong>Género:</strong> ${obra.genero}</li>
                     <li class="list-group-item"><strong>Páginas:</strong> ${obra.numeroPaginas}</li>
