@@ -1,44 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <title>VEMELOS - Inicio</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>VEMELOS - Inicio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body class="container mt-5">
-  <h1 class="text-center mb-4">Bienvenido a VEMELOS</h1>
-  <form action="search.html" method="get" class="d-flex justify-content-center">
-    <input type="text" name="q" class="form-control w-50 me-2" placeholder="Buscar obra...">
-    <button type="submit" class="btn btn-primary">Buscar</button>
-  </form>
-  <div class="text-center mt-4 admin-section">
-    <a id="loginBtn" href="login.html" class="btn btn-outline-secondary">Iniciar sesión</a>
-    <a id="registerBtn" href="register.html" class="btn btn-outline-success">Registrarse</a>
-  </div>
+    <h1 class="text-center mb-4">Bienvenido a VEMELOS</h1>
+    <form action="search.html" method="get" class="d-flex justify-content-center">
+        <input type="text" name="q" class="form-control w-50 me-2" placeholder="Buscar obra...">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <div class="text-center mt-4 admin-section">
+        <a id="loginBtn" href="login.html" class="btn btn-outline-secondary">Iniciar sesión</a>
+        <a id="registerBtn" href="register.html" class="btn btn-outline-success">Registrarse</a>
+        <a href="#" onclick="logout()" class="btn btn-outline-danger ms-2" id="logoutBtn" style="display: none;">Cerrar sesión</a>
+    </div>
 
-  <script>
-    const email = localStorage.getItem('userEmail');
-    if (email) {
-      // Ocultar botones de login y registro
-      document.getElementById('loginBtn')?.remove();
-      document.getElementById('registerBtn')?.remove();
+    <script>
+        const email = localStorage.getItem('userEmail');
+        if (email) {
+            // Ocultar botones de login y registro
+            document.getElementById('loginBtn')?.remove();
+            document.getElementById('registerBtn')?.remove();
 
-      // Verificar si es administrador
-      fetch('http://localhost:5000/api/users', {
-        headers: { 'x-user-email': email }
-      })
-      .then(res => res.json())
-      .then(users => {
-        const user = users.find(u => u.email === email);
-        if (user && user.isAdmin) {
-          const adminLink = document.createElement('a');
-          adminLink.href = 'admin.html';
-          adminLink.className = 'btn btn-outline-dark ms-2';
-          adminLink.textContent = 'Panel Admin';
-          document.querySelector('.admin-section')?.appendChild(adminLink);
+            // Verificar si es administrador
+            fetch('http://localhost:5000/api/users', {
+                headers: { 'x-user-email': email }
+            })
+                .then(res => res.json())
+                .then(users => {
+                    const user = users.find(u => u.email === email);
+                    if (user && user.isAdmin) {
+                        const adminLink = document.createElement('a');
+                        adminLink.href = 'admin.html';
+                        adminLink.className = 'btn btn-outline-dark ms-2';
+                        adminLink.textContent = 'Panel Admin';
+                        document.querySelector('.admin-section')?.appendChild(adminLink);
+                    }
+                });
         }
-      });
-    }
-  </script>
+        function logout() {
+            localStorage.removeItem('userEmail');
+            window.location.href = 'index.html'; // o la página a redirigir
+        }
+
+        if (localStorage.getItem('userEmail')) {
+            document.getElementById('logoutBtn').style.display = 'inline-block';
+        }
+
+    </script>
 </body>
+
 </html>
