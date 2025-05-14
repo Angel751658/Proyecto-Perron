@@ -8,6 +8,7 @@
 </head>
 
 <body class="container mt-4">
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-light shadow-sm sticky-top">
         <div class="container-fluid">
@@ -91,7 +92,7 @@
             <input type="text" class="form-control" id="titulo" required>
         </div>
         <div class="mb-3">
-            <label class="form-label">Autor</label>
+            <label class="form-label">Autor(es)</label>
             <input type="text" class="form-control" id="autor">
         </div>
         <div class="mb-3">
@@ -103,8 +104,32 @@
             <textarea class="form-control" id="descripcion"></textarea>
         </div>
         <div class="mb-3">
-            <label class="form-label">Link de compra</label>
+            <label class="form-label">Imagen (URL)</label>
+            <input type="url" class="form-control" id="imagenUrl">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Link de Compra</label>
             <input type="url" class="form-control" id="compraLink">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">ISBN</label>
+            <input type="text" class="form-control" id="isbn">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Idioma</label>
+            <input type="text" class="form-control" id="idioma">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Número de páginas</label>
+            <input type="number" class="form-control" id="numeroPaginas">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Colección</label>
+            <input type="text" class="form-control" id="coleccion">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Número de colección</label>
+            <input type="number" class="form-control" id="numeroColeccion">
         </div>
         <button type="submit" class="btn btn-primary">Guardar</button>
     </form>

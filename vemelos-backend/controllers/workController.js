@@ -2,14 +2,16 @@ const Work = require('../models/Work');
 
 // Crear nueva obra
 exports.createWork = async (req, res) => {
-    try {
-        const obra = new Work(req.body);
-        await obra.save();
-        res.status(201).json({ msg: 'Obra creada correctamente', obra });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+  try {
+    const obra = new Work(req.body);
+    await obra.save();
+    res.status(201).json({ msg: 'Obra creada correctamente', obra });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
 };
+
 
 // Obtener todas las obras
 exports.getAllWorks = async (req, res) => {
