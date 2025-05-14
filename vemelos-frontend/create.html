@@ -23,27 +23,16 @@
                     <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="search.html">Explorar</a></li>
                     <li class="nav-item"><a class="nav-link" href="favorites.html">Favoritos</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Categorías
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Manga</a></li>
-                            <li><a class="dropdown-item" href="#">Cómic</a></li>
-                            <li><a class="dropdown-item" href="#">Novela gráfica</a></li>
-                        </ul>
-                    </li>
+
                 </ul>
 
                 <div class="d-flex align-items-center">
                     <form class="d-flex me-3" role="search" action="search.html" method="get">
-                        <input class="form-control me-2" type="search" name="q" placeholder="Buscar..."
+                        <input class="form-control me-2 search-bar" type="search" name="q" placeholder="Buscar..."
                             aria-label="Buscar">
                         <button class="btn btn-outline-primary" type="submit">Buscar</button>
                     </form>
 
-                    <!-- Login/Register (dinámico) -->
                     <div id="userNav">
                         <a href="login.html" class="btn btn-outline-secondary me-2">Iniciar sesión</a>
                         <a href="register.html" class="btn btn-outline-success">Registrarse</a>
@@ -83,6 +72,69 @@
             localStorage.clear();
             location.href = 'index.html';
         }
+    
+        const nav = document.getElementById('navLinks');
+
+        if (email) {
+            // Enlaces para usuarios logueados
+            nav.innerHTML += `
+      <li class="nav-item"><a class="nav-link" href="favorites.html">Favoritos</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
+    `;
+            // Verificar si es admin
+            fetch('http://localhost:5000/api/users', {
+                headers: { 'x-user-email': email }
+            })
+                .then(res => res.json())
+                .then(users => {
+                    const user = users.find(u => u.email === email);
+                    if (user?.isAdmin) {
+                        nav.innerHTML += `<li class="nav-item"><a class="nav-link" href="admin.html">Panel Admin</a></li>`;
+                    }
+                });
+        } else {
+            // Enlaces públicos
+            nav.innerHTML += `
+      <li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
+      <li class="nav-item"><a class="nav-link" href="register.html">Registrarse</a></li>
+    `;
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+        
+        if (email) {
+            // Ocultar botones de login y registro
+            document.getElementById('loginBtn')?.remove();
+            document.getElementById('registerBtn')?.remove();
+
+            // Verificar si es administrador
+            fetch('http://localhost:5000/api/users', {
+                headers: { 'x-user-email': email }
+            })
+                .then(res => res.json())
+                .then(users => {
+                    const user = users.find(u => u.email === email);
+                    if (user && user.isAdmin) {
+                        const adminLink = document.createElement('a');
+                        adminLink.href = 'admin.html';
+                        adminLink.className = 'btn btn-outline-dark ms-2';
+                        adminLink.textContent = 'Panel Admin';
+                        document.querySelector('.admin-section')?.appendChild(adminLink);
+                    }
+                });
+        }
+        function logout() {
+            localStorage.removeItem('userEmail');
+            window.location.href = 'index.html'; // o la página a redirigir
+        }
+
+        if (localStorage.getItem('userEmail')) {
+            document.getElementById('logoutBtn').style.display = 'inline-block';
+        }
+
     </script>
 
     <h2>Agregar Nueva Obra</h2>
