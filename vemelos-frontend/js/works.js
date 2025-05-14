@@ -2,7 +2,7 @@
 if (location.pathname.includes('search.html')) {
     const params = new URLSearchParams(location.search);
     const q = params.get('q');
-
+    
     fetch('http://localhost:5000/api/works')
         .then(res => res.json())
         .then(obras => {
@@ -61,3 +61,41 @@ if (location.pathname.includes('details.html')) {
             `});
 
 }
+// Solo mostrar botón si no está ya en favoritos
+if (email) {
+    fetch('http://localhost:5000/api/users/me', {
+        headers: { 'x-user-email': email }
+    })
+        .then(res => res.json())
+        .then(user => {
+            if (!user || !user.email) return;
+
+            const id = new URLSearchParams(location.search).get('id');
+
+            if (user.favoritos && !user.favoritos.includes(id)) {
+                const favBtn = document.getElementById('favBtn');
+                if (favBtn) favBtn.style.display = 'inline-block';
+            }
+        });
+}
+
+// Evento para añadir favorito
+document.getElementById('favBtn')?.addEventListener('click', () => {
+    const obraId = new URLSearchParams(location.search).get('id');
+    const email = localStorage.getItem('userEmail');
+
+    fetch('http://localhost:5000/api/users/favorites/add', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-user-email': email
+        },
+        body: JSON.stringify({ obraId })
+    })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.msg || data.error);
+            window.location.href = 'favorites.html';
+        });
+});
+

@@ -45,13 +45,10 @@ exports.loginUser = async (req, res) => {
 
 // Obtener todos los usuarios (opcional para admin)
 exports.getUsers = async (req, res) => {
-    try {
-        const usuarios = await User.find().select('-password');
-        res.json(usuarios);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    const usuarios = await User.find();
+    res.json(usuarios);
 };
+
 
 exports.deleteUser = async (req, res) => {
     try {
@@ -115,6 +112,44 @@ exports.revokeAdminRole = async (req, res) => {
         }
 
         res.json({ msg: 'Privilegios de administrador revocados', usuario: actualizado });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+exports.addFavorite = async (req, res) => {
+    try {
+        const { email } = req.headers['x-user-email'] ? { email: req.headers['x-user-email'] } : req.user;
+        const { obraId } = req.body;
+
+        const user = await User.findOneAndUpdate(
+            { email },
+            { $addToSet: { favoritos: obraId } }, // evita duplicados
+            { new: true }
+        );
+
+        if (!user) return res.status(404).json({ msg: 'Usuario no encontrado' });
+
+        res.json({ msg: 'Obra añadida a favoritos', favoritos: user.favoritos });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+exports.removeFavorite = async (req, res) => {
+    try {
+        const { email } = req.headers['x-user-email'] ? { email: req.headers['x-user-email'] } : req.user;
+        const { obraId } = req.body;
+
+        const user = await User.findOneAndUpdate(
+            { email },
+            { $pull: { favoritos: obraId } },
+            { new: true }
+        );
+
+        if (!user) return res.status(404).json({ msg: 'Usuario no encontrado' });
+
+        res.json({ msg: 'Obra eliminada de favoritos', favoritos: user.favoritos });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

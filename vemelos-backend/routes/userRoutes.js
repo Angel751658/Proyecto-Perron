@@ -1,41 +1,42 @@
 const express = require('express');
 const router = express.Router();
 const {
-    registerUser,
-    loginUser,
-    getUsers
+  registerUser,
+  loginUser,
+  getUsers,
+  deleteUser,
+  setAdminRole,
+  revokeAdminRole,
+  addFavorite,
+  removeFavorite
 } = require('../controllers/userController');
 
 const { isAuthenticated, isAdmin } = require('../middleware/authMiddleware');
-const { deleteUser } = require('../controllers/userController');
-const { setAdminRole } = require('../controllers/userController');
-const { revokeAdminRole } = require('../controllers/userController');
 
-router.delete('/:id', isAuthenticated, isAdmin, deleteUser);
-router.put('/:id/admin', isAuthenticated, isAdmin, setAdminRole);
-router.put('/:id/revoke', isAuthenticated, isAdmin, revokeAdminRole);
-
-
-
-// Registro público
-router.post('/register', registerUser);
-
-// Login público
-router.post('/login', loginUser);
-
-// Obtener todos los usuarios (solo admin autenticado)
-router.get('/', isAuthenticated, isAdmin, getUsers);
-
-router.delete('/:id', isAuthenticated, isAdmin, async (req, res) => {
+// Ruta para obtener el usuario actual
+router.get('/me', isAuthenticated, async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ msg: 'Usuario eliminado correctamente' });
+    const email = req.headers['x-user-email'];
+    const usuario = await require('../models/User').findOne({ email });
+    if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
+    res.json(usuario);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
+// Registro e inicio de sesión
+router.post('/register', registerUser);
+router.post('/login', loginUser);
 
+// Acceso para administradores
+router.get('/', isAuthenticated, isAdmin, getUsers);
+router.delete('/:id', isAuthenticated, isAdmin, deleteUser);
+router.put('/:id/admin', isAuthenticated, isAdmin, setAdminRole);
+router.put('/:id/revoke', isAuthenticated, isAdmin, revokeAdminRole);
 
+// Funciones de favoritos
+router.put('/favorites/add', isAuthenticated, addFavorite);
+router.put('/favorites/remove', isAuthenticated, removeFavorite);
 
 module.exports = router;

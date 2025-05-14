@@ -44,99 +44,46 @@
 
     <script>
         const email = localStorage.getItem('userEmail');
-        const navContainer = document.getElementById('userNav');
+        const nav = document.getElementById('navLinks');
 
-        if (email) {
-            // Reemplazar botones por logout y admin (si aplica)
-            navContainer.innerHTML = `
-      <button class="btn btn-outline-danger me-2" onclick="logout()">Cerrar sesión</button>
-      <span class="me-3 small text-muted">${email}</span>`;
+        if (email && nav) {
+            // Mostrar enlaces comunes
+            nav.innerHTML = `
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="favorites.html">Favoritos</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
+        <li class="nav-item"><span class="nav-link text-muted small">${email}</span></li>
+      </ul>`;
 
-            fetch('http://localhost:5000/api/users', {
+            // Verificar si es administrador
+            fetch('http://localhost:5000/api/users/me', {
                 headers: { 'x-user-email': email }
             })
                 .then(res => res.json())
-                .then(users => {
-                    const user = users.find(u => u.email === email);
+                .then(user => {
                     if (user?.isAdmin) {
                         const adminBtn = document.createElement('a');
                         adminBtn.href = 'admin.html';
                         adminBtn.className = 'btn btn-outline-dark me-2';
                         adminBtn.textContent = 'Panel Admin';
-                        //navContainer.prepend(adminBtn);
+                        nav.prepend(adminBtn);
                     }
-                });
+                })
+                .catch(err => console.error("Error cargando usuario:", err));
         }
 
-        function logout() {
-            localStorage.clear();
-            location.href = 'index.html';
-        }
-
-        const nav = document.getElementById('navLinks');
-
-        if (email) {
-            // Enlaces para usuarios logueados
-            nav.innerHTML += `
-      <li class="nav-item"><a class="nav-link" href="favorites.html">Favoritos</a></li>
-      <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
-    `;
-            // Verificar si es admin
-            fetch('http://localhost:5000/api/users', {
-                headers: { 'x-user-email': email }
-            })
-                .then(res => res.json())
-                .then(users => {
-                    const user = users.find(u => u.email === email);
-                    if (user?.isAdmin) {
-                        nav.innerHTML += `<li class="nav-item"><a class="nav-link" href="admin.html">Panel Admin</a></li>`;
-                    }
-                });
-        } else {
-            // Enlaces públicos
-            nav.innerHTML += `
-            <li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
-            <li class="nav-item"><a class="nav-link" href="register.html">Registrarse</a></li>`;
-        }
-
-        function logout() {
-            localStorage.clear();
-            window.location.href = "index.html";
-        }
-
-        if (email) {
-            // Ocultar botones de login y registro
-            document.getElementById('loginBtn')?.remove();
-            document.getElementById('registerBtn')?.remove();
-
-            // Verificar si es administrador
-            fetch('http://localhost:5000/api/users', {
-                headers: { 'x-user-email': email }
-            })
-                .then(res => res.json())
-                .then(users => {
-                    const user = users.find(u => u.email === email);
-                    if (user && user.isAdmin) {
-                        const adminLink = document.createElement('a');
-                        adminLink.href = 'admin.html';
-                        adminLink.className = 'btn btn-outline-dark ms-2';
-                        adminLink.textContent = 'Panel Admin';
-                        document.querySelector('.admin-section')?.appendChild(adminLink);
-                    }
-                });
-        }
         function logout() {
             localStorage.removeItem('userEmail');
-            window.location.href = 'index.html'; // o la página a redirigir
+            location.href = 'login.html';
         }
-
-        if (localStorage.getItem('userEmail')) {
-            document.getElementById('logoutBtn').style.display = 'inline-block';
-        }
-
     </script>
 
+
     <h2>Panel del Administrador</h2>
+
+    <nav>
+        <ul id="navLinks" class="nav justify-content-end"></ul>
+    </nav>
 
     <div class="text-end mb-3">
         <a href="create.html" class="btn btn-success">Agregar Nueva Obra</a>

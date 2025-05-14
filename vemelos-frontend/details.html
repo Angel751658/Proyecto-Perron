@@ -55,6 +55,12 @@
     <script>
         const email = localStorage.getItem('userEmail');
         const navContainer = document.getElementById('userNav');
+        user = 0;
+
+        const obraId = new URLSearchParams(location.search).get('id');
+        if (user.favoritos && !user.favoritos.includes(obraId)) {
+            document.getElementById('favBtn').style.display = 'inline-block';
+        }
 
         if (email) {
             // Reemplazar botones por logout y admin (si aplica)
@@ -62,18 +68,26 @@
       <button class="btn btn-outline-danger me-2" onclick="logout()">Cerrar sesión</button>
       <span class="me-3 small text-muted">${email}</span>`;
 
-            fetch('http://localhost:5000/api/users', {
+            fetch('http://localhost:5000/api/users/me', {
                 headers: { 'x-user-email': email }
             })
                 .then(res => res.json())
-                .then(users => {
-                    const user = users.find(u => u.email === email);
-                    if (user?.isAdmin) {
+                .then(user => {
+                    if (!user || !user.email) return;
+
+                    // ejemplo: si quieres saber si es admin
+                    if (user.isAdmin) {
                         const adminBtn = document.createElement('a');
                         adminBtn.href = 'admin.html';
                         adminBtn.className = 'btn btn-outline-dark me-2';
                         adminBtn.textContent = 'Panel Admin';
                         navContainer.prepend(adminBtn);
+                    }
+
+                    // para mostrar botón de favoritos si no lo tiene
+                    const obraId = new URLSearchParams(location.search).get('id');
+                    if (obraId && user.favoritos && !user.favoritos.includes(obraId)) {
+                        document.getElementById('favBtn')?.style?.setProperty('display', 'inline-block');
                     }
                 });
         }
@@ -86,6 +100,9 @@
 
     <h2>Detalles de la Obra</h2>
     <div id="work-details" class="mt-4"></div>
+
+    <button id="favBtn" class="btn btn-outline-primary">❤️ Añadir a favoritos</button>
+
 
     <script src="js/works.js"></script>
 </body>
