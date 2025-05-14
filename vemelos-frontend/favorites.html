@@ -3,8 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>VEMELOS - Favoritos</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>VEMELOS - Favoritos</title>    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 
 <body class="container mt-4">
@@ -53,42 +55,80 @@
     </nav>
 
     <script>
-        const email = localStorage.getItem('userEmail');
-        const navContainer = document.getElementById('userNav');
+        document.addEventListener('DOMContentLoaded', () => {
+            const email = localStorage.getItem('userEmail');
+            const container = document.getElementById('favorites');
 
-        if (email) {
-            // Reemplazar botones por logout y admin (si aplica)
-            navContainer.innerHTML = `
-      <button class="btn btn-outline-danger me-2" onclick="logout()">Cerrar sesión</button>
-      <span class="me-3 small text-muted">${email}</span>`;
+            if (!container) {
+                console.error("❌ No se encontró el contenedor #favorites");
+                return;
+            }
 
-            fetch('http://localhost:5000/api/users/me', {
-                headers: { 'x-user-email': email }
+            if (!email) {
+                container.innerHTML = '<p>Inicia sesión para ver tus favoritos.</p>';
+            } else {
+                fetch('http://localhost:5000/api/users/me', {
+                    headers: { 'x-user-email': email }
+                })
+                    .then(res => res.json())
+                    .then(async user => {
+                        if (!user || !user.favoritos || user.favoritos.length === 0) {
+                            container.innerHTML = '<p>No hay obras en favoritos.</p>';
+                            return;
+                        }
+
+                        const obrasHtml = await Promise.all(user.favoritos.map(async id => {
+                            const res = await fetch(`http://localhost:5000/api/works/${id}`);
+                            const obra = await res.json();
+
+                            return `
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                    <img src="${obra.imagenUrl}" class="card-img-top" alt="${obra.titulo}" style="height: 250px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${obra.titulo}</h5>
+                                        <p class="card-text">${obra.descripcion || 'Sin descripción.'}</p>
+                                        <div class="d-flex justify-content-between">
+                                        <a href="details.html?id=${obra._id}" class="btn btn-primary">Ver más</a>
+                                        <button class="btn btn-outline-danger" onclick="quitarFavorito('${obra._id}')">
+                                            <i class="bi bi-trash"></i> Quitar
+                                        </button>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>`;
+                        }));
+
+                        container.innerHTML = obrasHtml.join('');
+                    })
+                    .catch(err => {
+                        console.error('Error cargando favoritos:', err);
+                        container.innerHTML = '<p>Error al cargar favoritos.</p>';
+                    });
+            }
+        });
+
+        function quitarFavorito(idObra) {
+            const email = localStorage.getItem('userEmail');
+            if (!email) return alert("No has iniciado sesión.");
+
+            fetch('http://localhost:5000/api/users/favorites/remove', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-user-email': email
+                },
+                body: JSON.stringify({ obraId: idObra })
             })
                 .then(res => res.json())
-                .then(user => {
-                    if (!user || !user.email) return;
-
-                    // ejemplo: si quieres saber si es admin
-                    if (user.isAdmin) {
-                        const adminBtn = document.createElement('a');
-                        adminBtn.href = 'admin.html';
-                        adminBtn.className = 'btn btn-outline-dark me-2';
-                        adminBtn.textContent = 'Panel Admin';
-                        navContainer.prepend(adminBtn);
-                    }
-
-                    // para mostrar botón de favoritos si no lo tiene
-                    const obraId = new URLSearchParams(location.search).get('id');
-                    if (obraId && user.favoritos && !user.favoritos.includes(obraId)) {
-                        document.getElementById('favBtn')?.style?.setProperty('display', 'inline-block');
-                    }
+                .then(data => {
+                    alert(data.msg || "Obra eliminada de favoritos.");
+                    location.reload(); // refresca la vista
+                })
+                .catch(err => {
+                    console.error("❌ Error al quitar favorito:", err);
+                    alert("Error al quitar favorito.");
                 });
-        }
-
-        function logout() {
-            localStorage.clear();
-            location.href = 'index.html';
         }
     </script>
 
