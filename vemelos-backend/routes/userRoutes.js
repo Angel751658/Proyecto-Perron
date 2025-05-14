@@ -9,11 +9,12 @@ const {
 const { isAuthenticated, isAdmin } = require('../middleware/authMiddleware');
 const { deleteUser } = require('../controllers/userController');
 const { setAdminRole } = require('../controllers/userController');
-const { removeAdminRole } = require('../controllers/userController');
+const { revokeAdminRole } = require('../controllers/userController');
 
 router.delete('/:id', isAuthenticated, isAdmin, deleteUser);
 router.put('/:id/admin', isAuthenticated, isAdmin, setAdminRole);
-router.put('/:id/remove-admin', isAuthenticated, isAdmin, removeAdminRole);
+router.put('/:id/revoke', isAuthenticated, isAdmin, revokeAdminRole);
+
 
 
 // Registro público

@@ -121,130 +121,131 @@ if (location.pathname.includes('admin.html')) {
             });
         });
 
-//     // Mostrar usuarios con botón para eliminar
-//     fetch('http://localhost:5000/api/users', {
-//         headers: { 'x-user-email': email }
-//     })
-//         .then(res => res.json())
-//         .then(users => {
-//             const userSection = document.createElement('div');
-//             userSection.className = 'mt-5';
-//             userSection.innerHTML = '<h3>Usuarios Registrados</h3><ul class="list-group mt-3"></ul>';
-//             document.body.appendChild(userSection);
+    //     // Mostrar usuarios con botón para eliminar
+    //     fetch('http://localhost:5000/api/users', {
+    //         headers: { 'x-user-email': email }
+    //     })
+    //         .then(res => res.json())
+    //         .then(users => {
+    //             const userSection = document.createElement('div');
+    //             userSection.className = 'mt-5';
+    //             userSection.innerHTML = '<h3>Usuarios Registrados</h3><ul class="list-group mt-3"></ul>';
+    //             document.body.appendChild(userSection);
 
-//             const ul = userSection.querySelector('ul');
-//             users.forEach(u => {
-//                 const li = document.createElement('li');
-//                 li.className = 'list-group-item d-flex justify-content-between align-items-center';
-//                 li.innerHTML = `<span>${u.user} (${u.email})</span>
-//                                 <button class="btn btn-sm btn-danger" onclick="eliminarUsuario('${u._id}')">Eliminar</button>`;
-//                 ul.appendChild(li);
-//             });
+    //             const ul = userSection.querySelector('ul');
+    //             users.forEach(u => {
+    //                 const li = document.createElement('li');
+    //                 li.className = 'list-group-item d-flex justify-content-between align-items-center';
+    //                 li.innerHTML = `<span>${u.user} (${u.email})</span>
+    //                                 <button class="btn btn-sm btn-danger" onclick="eliminarUsuario('${u._id}')">Eliminar</button>`;
+    //                 ul.appendChild(li);
+    //             });
 
-//         });
-// }
+    //         });
+    // }
 
-// Eliminar usuario
-function eliminarUsuario(id) {
-    if (!confirm('¿Eliminar este usuario?')) return;
+    // Eliminar usuario
+    function eliminarUsuario(id) {
+        if (!confirm('¿Eliminar este usuario?')) return;
 
-    fetch(`http://localhost:5000/api/users/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'x-user-email': localStorage.getItem('userEmail')
-        }
-    })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.msg || data.error);
-            location.reload();
-        });
-}
-
-function hacerAdmin(id) {
-    if (!confirm('¿Asignar privilegios de administrador a este usuario?')) return;
-
-    fetch(`http://localhost:5000/api/users/${id}/admin`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-user-email': localStorage.getItem('userEmail')
-        }
-    })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.msg || data.error);
-            location.reload();
-        });
-}
-
-function quitarAdmin(id) {
-    if (!confirm('¿Quitar privilegios de administrador a este usuario?')) return;
-
-    fetch(`http://localhost:5000/api/users/${id}/admin`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-user-email': localStorage.getItem('userEmail')
-        }
-    })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.msg || data.error);
-            location.reload();
-        });
-}
-
-// Mostrar usuarios con botón "Eliminar" y "Hacer Admin" o "Quitar Admin"
-fetch('http://localhost:5000/api/users', {
-    headers: { 'x-user-email': localStorage.getItem('userEmail') }
-})
-    .then(res => res.json())
-    .then(users => {
-        const currentUserEmail = localStorage.getItem('userEmail');
-
-        const userSection = document.createElement('div');
-        userSection.className = 'mt-5';
-        userSection.innerHTML = '<h3>Usuarios Registrados</h3><ul class="list-group mt-3"></ul>';
-        document.body.appendChild(userSection);
-
-        const ul = userSection.querySelector('ul');
-        users.forEach(u => {
-            // No mostrar al usuario actual
-            if (u.email === currentUserEmail) return;
-
-            const li = document.createElement('li');
-            li.className = 'list-group-item d-flex justify-content-between align-items-center';
-
-            const span = document.createElement('span');
-            span.textContent = `${u.user} (${u.email})`;
-
-            const btnPanel = document.createElement('div');
-
-            // Solo permitir eliminar si NO es admin
-            if (!u.isAdmin) {
-                const btnEliminar = document.createElement('button');
-                btnEliminar.textContent = 'Eliminar';
-                btnEliminar.className = 'btn btn-sm btn-danger me-2';
-                btnEliminar.addEventListener('click', () => eliminarUsuario(u._id));
-                btnPanel.appendChild(btnEliminar);
+        fetch(`http://localhost:5000/api/users/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'x-user-email': localStorage.getItem('userEmail')
             }
+        })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.msg || data.error);
+                location.reload();
+            });
+    }
 
-            const btnAdmin = document.createElement('button');
-            btnAdmin.className = 'btn btn-sm btn-secondary';
-            if (u.isAdmin) {
-                btnAdmin.textContent = 'Quitar Admin';
-                btnAdmin.addEventListener('click', () => quitarAdmin(u._id));
-            } else {
-                btnAdmin.textContent = 'Hacer Admin';
-                btnAdmin.addEventListener('click', () => hacerAdmin(u._id));
+    function hacerAdmin(id) {
+        if (!confirm('¿Asignar privilegios de administrador a este usuario?')) return;
+
+        fetch(`http://localhost:5000/api/users/${id}/admin`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-user-email': localStorage.getItem('userEmail')
             }
-            btnPanel.appendChild(btnAdmin);
+        })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.msg || data.error);
+                location.reload();
+            });
+    }
 
-            li.appendChild(span);
-            li.appendChild(btnPanel);
-            ul.appendChild(li);
+    function quitarAdmin(id) {
+        if (!confirm('¿Quitar privilegios de administrador a este usuario?')) return;
+
+        fetch(`http://localhost:5000/api/users/${id}/revoke`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-user-email': localStorage.getItem('userEmail')
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.msg || data.error);
+                location.reload();
+            });
+    }
+
+
+    // Mostrar usuarios con botón "Eliminar" y "Hacer Admin" o "Quitar Admin"
+    fetch('http://localhost:5000/api/users', {
+        headers: { 'x-user-email': localStorage.getItem('userEmail') }
+    })
+        .then(res => res.json())
+        .then(users => {
+            const currentUserEmail = localStorage.getItem('userEmail');
+
+            const userSection = document.createElement('div');
+            userSection.className = 'mt-5';
+            userSection.innerHTML = '<h3>Usuarios Registrados</h3><ul class="list-group mt-3"></ul>';
+            document.body.appendChild(userSection);
+
+            const ul = userSection.querySelector('ul');
+            users.forEach(u => {
+                // No mostrar al usuario actual
+                if (u.email === currentUserEmail) return;
+
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+                const span = document.createElement('span');
+                span.textContent = `${u.user} (${u.email})`;
+
+                const btnPanel = document.createElement('div');
+
+                // Solo permitir eliminar si NO es admin
+                if (!u.isAdmin) {
+                    const btnEliminar = document.createElement('button');
+                    btnEliminar.textContent = 'Eliminar';
+                    btnEliminar.className = 'btn btn-sm btn-danger me-2';
+                    btnEliminar.addEventListener('click', () => eliminarUsuario(u._id));
+                    btnPanel.appendChild(btnEliminar);
+                }
+
+                const btnAdmin = document.createElement('button');
+                btnAdmin.className = 'btn btn-sm btn-secondary';
+                if (u.isAdmin) {
+                    btnAdmin.textContent = 'Quitar Admin';
+                    btnAdmin.addEventListener('click', () => quitarAdmin(u._id));
+                } else {
+                    btnAdmin.textContent = 'Hacer Admin';
+                    btnAdmin.addEventListener('click', () => hacerAdmin(u._id));
+                }
+                btnPanel.appendChild(btnAdmin);
+
+                li.appendChild(span);
+                li.appendChild(btnPanel);
+                ul.appendChild(li);
+            });
         });
-    });
 
 }

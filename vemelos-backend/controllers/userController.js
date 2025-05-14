@@ -100,12 +100,12 @@ exports.setAdminRole = async (req, res) => {
     }
 };
 
-exports.removeAdminRole = async (req, res) => {
+
+exports.revokeAdminRole = async (req, res) => {
     try {
         const id = req.params.id;
-
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ msg: 'ID inválido' });
+            return res.status(400).json({ msg: 'ID de usuario inválido' });
         }
 
         const actualizado = await User.findByIdAndUpdate(id, { isAdmin: false }, { new: true });
@@ -114,7 +114,7 @@ exports.removeAdminRole = async (req, res) => {
             return res.status(404).json({ msg: 'Usuario no encontrado' });
         }
 
-        res.json({ msg: 'Rol de administrador eliminado', usuario: actualizado });
+        res.json({ msg: 'Privilegios de administrador revocados', usuario: actualizado });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
