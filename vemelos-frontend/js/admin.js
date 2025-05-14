@@ -17,41 +17,41 @@ document.getElementById('createForm')?.addEventListener('submit', async (e) => {
     };
 
     console.log("Enviando datos:", data);
-document.getElementById('createForm')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  console.log("🟢 Formulario de obra enviado");
+    document.getElementById('createForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        console.log("🟢 Formulario de obra enviado");
 
-  const data = {
-    titulo: document.getElementById('titulo')?.value,
-    autor: document.getElementById('autor')?.value,
-    genero: document.getElementById('genero')?.value,
-    descripcion: document.getElementById('descripcion')?.value,
-    imagenUrl: document.getElementById('imagenUrl')?.value,
-    compraLink: document.getElementById('compraLink')?.value,
-    isbn: document.getElementById('isbn')?.value,
-    idioma: document.getElementById('idioma')?.value,
-    numeroPaginas: parseInt(document.getElementById('numeroPaginas')?.value),
-    coleccion: document.getElementById('coleccion')?.value,
-    numeroColeccion: parseInt(document.getElementById('numeroColeccion')?.value)
-  };
+        const data = {
+            titulo: document.getElementById('titulo')?.value,
+            autor: document.getElementById('autor')?.value,
+            genero: document.getElementById('genero')?.value,
+            descripcion: document.getElementById('descripcion')?.value,
+            imagenUrl: document.getElementById('imagenUrl')?.value,
+            compraLink: document.getElementById('compraLink')?.value,
+            isbn: document.getElementById('isbn')?.value,
+            idioma: document.getElementById('idioma')?.value,
+            numeroPaginas: parseInt(document.getElementById('numeroPaginas')?.value),
+            coleccion: document.getElementById('coleccion')?.value,
+            numeroColeccion: parseInt(document.getElementById('numeroColeccion')?.value)
+        };
 
-  console.log("🟡 Datos a enviar:", data);
+        console.log("🟡 Datos a enviar:", data);
 
-  const res = await fetch('http://localhost:5000/api/works', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-user-email': localStorage.getItem('userEmail')
-    },
-    body: JSON.stringify(data)
-  });
+        const res = await fetch('http://localhost:5000/api/works', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-user-email': localStorage.getItem('userEmail')
+            },
+            body: JSON.stringify(data)
+        });
 
-  const result = await res.json();
-  console.log("🔵 Respuesta del servidor:", result);
+        const result = await res.json();
+        console.log("🔵 Respuesta del servidor:", result);
 
-  alert(result.msg || result.error);
-  if (res.ok) location.href = 'admin.html';
-});
+        alert(result.msg || result.error);
+        if (res.ok) location.href = 'admin.html';
+    });
 
 
     const res = await fetch('http://localhost:5000/api/works', {
