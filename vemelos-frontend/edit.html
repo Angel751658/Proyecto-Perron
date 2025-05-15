@@ -49,12 +49,19 @@
     </nav>
 
     <script>
+        const email = localStorage.getItem('userEmail');
         const navContainer = document.getElementById('userNav');
+        user = 0;
 
-        if (email && navContainer) {
+        const obraId = new URLSearchParams(location.search).get('id');
+        if (user.favoritos && !user.favoritos.includes(obraId)) {
+            document.getElementById('favBtn').style.display = 'inline-block';
+        }
+
+        if (email) {
             navContainer.innerHTML = `
-        <button class="btn btn-outline-danger me-2" onclick="logout()">Cerrar sesión</button>
-        <span class="me-3 small text-muted">${email}</span>`;
+            <button class="btn btn-outline-danger me-2" onclick="logout()">Cerrar sesión</button>
+            <span class="me-3 small text-muted">${email}</span>`;
 
             fetch('http://localhost:5000/api/users/me', {
                 headers: { 'x-user-email': email }
@@ -70,13 +77,17 @@
                         adminBtn.textContent = 'Panel Admin';
                         navContainer.prepend(adminBtn);
                     }
-                })
-                .catch(err => console.error("Error al obtener usuario:", err));
+
+                    const obraId = new URLSearchParams(location.search).get('id');
+                    if (obraId && user.favoritos && !user.favoritos.includes(obraId)) {
+                        document.getElementById('favBtn')?.style?.setProperty('display', 'inline-block');
+                    }
+                });
         }
 
         function logout() {
-            localStorage.removeItem('userEmail');
-            window.location.href = 'login.html';
+            localStorage.clear();
+            location.href = 'index.html';
         }
     </script>
 

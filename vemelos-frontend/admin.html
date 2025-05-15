@@ -83,9 +83,16 @@
     </div>
 
     <script>
+        const email = localStorage.getItem('userEmail');
         const navContainer = document.getElementById('userNav');
+        user = 0;
 
-        if (email && navContainer) {
+        const obraId = new URLSearchParams(location.search).get('id');
+        if (user.favoritos && !user.favoritos.includes(obraId)) {
+            document.getElementById('favBtn').style.display = 'inline-block';
+        }
+
+        if (email) {
             navContainer.innerHTML = `
             <button class="btn btn-outline-danger me-2" onclick="logout()">Cerrar sesión</button>
             <span class="me-3 small text-muted">${email}</span>`;
@@ -104,46 +111,18 @@
                         adminBtn.textContent = 'Panel Admin';
                         navContainer.prepend(adminBtn);
                     }
-                })
-                .catch(err => console.error("Error al obtener usuario:", err));
-        }
 
-        function logout() {
-            localStorage.removeItem('userEmail');
-            window.location.href = 'login.html';
-        }
-
-        const email = localStorage.getItem('userEmail');
-        const nav = document.getElementById('userNav');
-
-        if (email && nav) {
-            nav.innerHTML = `
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="favorites.html">Favoritos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
-                <li class="nav-item"><span class="nav-link text-muted small">${email}</span></li>
-            </ul>`;
-
-            fetch('http://localhost:5000/api/users/me', {
-                headers: { 'x-user-email': email }
-            })
-                .then(res => res.json())
-                .then(user => {
-                    if (user?.isAdmin) {
-                        const adminBtn = document.createElement('a');
-                        adminBtn.href = 'admin.html';
-                        adminBtn.className = 'btn btn-outline-dark me-2';
-                        adminBtn.textContent = 'Panel Admin';
-                        nav.prepend(adminBtn);
+                    const obraId = new URLSearchParams(location.search).get('id');
+                    if (obraId && user.favoritos && !user.favoritos.includes(obraId)) {
+                        document.getElementById('favBtn')?.style?.setProperty('display', 'inline-block');
                     }
-                })
-                .catch(err => console.error("Error cargando usuario:", err));
+                });
         }
 
         function logout() {
-            localStorage.removeItem('userEmail');
-            location.href = 'login.html';
-        }
+            localStorage.clear();
+            location.href = 'index.html';
+        }        
 
         document.addEventListener('DOMContentLoaded', () => {
             // Usuarios

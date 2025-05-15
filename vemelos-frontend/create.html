@@ -49,9 +49,16 @@
     </nav>
 
     <script>
+        const email = localStorage.getItem('userEmail');
         const navContainer = document.getElementById('userNav');
+        user = 0;
 
-        if (email && navContainer) {
+        const obraId = new URLSearchParams(location.search).get('id');
+        if (user.favoritos && !user.favoritos.includes(obraId)) {
+            document.getElementById('favBtn').style.display = 'inline-block';
+        }
+
+        if (email) {
             navContainer.innerHTML = `
             <button class="btn btn-outline-danger me-2" onclick="logout()">Cerrar sesión</button>
             <span class="me-3 small text-muted">${email}</span>`;
@@ -70,75 +77,19 @@
                         adminBtn.textContent = 'Panel Admin';
                         navContainer.prepend(adminBtn);
                     }
-                })
-                .catch(err => console.error("Error al obtener usuario:", err));
-        }
 
-        function logout() {
-            localStorage.removeItem('userEmail');
-            window.location.href = 'login.html';
-        }
-        
-        const email = localStorage.getItem('userEmail');
-        const nav = document.getElementById('navLinks');
-
-        if (email) {
-            // Enlaces para usuarios logueados
-            nav.innerHTML += `
-            <li class="nav-item"><a class="nav-link" href="favorites.html">Favoritos</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
-            `;
-
-            // Verificar si es admin
-            fetch('http://localhost:5000/api/users', {
-                headers: { 'x-user-email': email }
-            })
-                .then(res => res.json())
-                .then(users => {
-                    const user = users.find(u => u.email === email);
-                    if (user?.isAdmin) {
-                        nav.innerHTML += `<li class="nav-item"><a class="nav-link" href="admin.html">Panel Admin</a></li>`;
+                    const obraId = new URLSearchParams(location.search).get('id');
+                    if (obraId && user.favoritos && !user.favoritos.includes(obraId)) {
+                        document.getElementById('favBtn')?.style?.setProperty('display', 'inline-block');
                     }
                 });
-        } else {
-            // Enlaces públicos
-            nav.innerHTML += `
-            <li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
-            <li class="nav-item"><a class="nav-link" href="register.html">Registrarse</a></li>
-            `;
         }
 
         function logout() {
             localStorage.clear();
-            window.location.href = "index.html";
+            location.href = 'index.html';
         }
-
-        if (email) {
-            // Ocultar botones de login y registro
-            document.getElementById('loginBtn')?.remove();
-            document.getElementById('registerBtn')?.remove();
-
-            // Verificar si es administrador
-            fetch('http://localhost:5000/api/users', {
-                headers: { 'x-user-email': email }
-            })
-                .then(res => res.json())
-                .then(users => {
-                    const user = users.find(u => u.email === email);
-                    if (user && user.isAdmin) {
-                        const adminLink = document.createElement('a');
-                        adminLink.href = 'admin.html';
-                        adminLink.className = 'btn btn-outline-dark ms-2';
-                        adminLink.textContent = 'Panel Admin';
-                        document.querySelector('.admin-section')?.appendChild(adminLink);
-                    }
-                });
-        }
-        function logout() {
-            localStorage.removeItem('userEmail');
-            window.location.href = 'index.html'; // o la página a redirigir
-        }
-
+                
         if (localStorage.getItem('userEmail')) {
             document.getElementById('logoutBtn').style.display = 'inline-block';
         }
