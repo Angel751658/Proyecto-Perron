@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>VEMELOS - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body class="container mt-4">
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-light shadow-sm sticky-top">
         <div class="container-fluid">
@@ -23,7 +24,6 @@
                     <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="search.html">Explorar</a></li>
                     <li class="nav-item"><a class="nav-link" href="favorites.html">Favoritos</a></li>
-
                 </ul>
 
                 <div class="d-flex align-items-center">
@@ -42,20 +42,53 @@
         </div>
     </nav>
 
+    <h2 class="mt-4">Panel del Administrador</h2>
+
+    <!-- Tabs para separar obras y usuarios -->
+    <ul class="nav nav-tabs mt-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="obras-tab" data-bs-toggle="tab" data-bs-target="#obras" type="button"
+                role="tab">Obras</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="usuarios-tab" data-bs-toggle="tab" data-bs-target="#usuarios" type="button"
+                role="tab">Usuarios</button>
+        </li>
+    </ul>
+
+    <div class="tab-content pt-4">
+        <!-- Obras -->
+        <div class="tab-pane fade show active" id="obras" role="tabpanel" aria-labelledby="obras-tab">
+            <div class="d-flex justify-content-between mb-3">
+                <input type="text" id="buscarObra" class="form-control w-50" placeholder="Buscar obra por título...">
+                <a href="create.html" class="btn btn-success">Agregar Nueva Obra</a>
+            </div>
+            <div id="admin-works" class="row"></div>
+        </div>
+
+        <!-- Usuarios -->
+        <div class="tab-pane fade" id="usuarios" role="tabpanel" aria-labelledby="usuarios-tab">
+            <div class="mt-3">
+                <input type="text" id="buscarUsuario" class="form-control mb-3 w-50"
+                    placeholder="Buscar usuario por nombre o correo...">
+                <ul class="list-group" id="user-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para insertar enlaces si hay usuario -->
     <script>
         const email = localStorage.getItem('userEmail');
-        const nav = document.getElementById('navLinks');
+        const nav = document.getElementById('userNav');
 
         if (email && nav) {
-            // Mostrar enlaces comunes
             nav.innerHTML = `
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="favorites.html">Favoritos</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
-        <li class="nav-item"><span class="nav-link text-muted small">${email}</span></li>
-      </ul>`;
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="favorites.html">Favoritos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
+                    <li class="nav-item"><span class="nav-link text-muted small">${email}</span></li>
+                </ul>`;
 
-            // Verificar si es administrador
             fetch('http://localhost:5000/api/users/me', {
                 headers: { 'x-user-email': email }
             })
@@ -76,26 +109,87 @@
             localStorage.removeItem('userEmail');
             location.href = 'login.html';
         }
+
+        // Filtro de búsqueda para obras
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Filtro de búsqueda para usuarios
+            let listaUsuarios = document.getElementById('user-list');
+            let inputBusquedaUsuarios = document.getElementById('buscarUsuario');
+            let datosUsuarios = []; // array global para guardar los usuarios
+
+            function renderUsuarios(filtrados) {
+                listaUsuarios.innerHTML = '';
+                const currentUserEmail = localStorage.getItem('userEmail');
+
+                filtrados.forEach(u => {
+                    if (u.email === currentUserEmail) return;
+
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+                    const span = document.createElement('span');
+                    span.textContent = `${u.user} (${u.email})`;
+
+                    const btnPanel = document.createElement('div');
+
+                    if (!u.isAdmin) {
+                        const btnEliminar = document.createElement('button');
+                        btnEliminar.textContent = 'Eliminar';
+                        btnEliminar.className = 'btn btn-sm btn-danger me-2';
+                        btnEliminar.addEventListener('click', () => eliminarUsuario(u._id));
+                        btnPanel.appendChild(btnEliminar);
+                    }
+
+                    const btnAdmin = document.createElement('button');
+                    btnAdmin.className = 'btn btn-sm btn-secondary';
+                    if (u.isAdmin) {
+                        btnAdmin.textContent = 'Quitar Admin';
+                        btnAdmin.addEventListener('click', () => quitarAdmin(u._id));
+                    } else {
+                        btnAdmin.textContent = 'Hacer Admin';
+                        btnAdmin.addEventListener('click', () => hacerAdmin(u._id));
+                    }
+
+                    btnPanel.appendChild(btnAdmin);
+                    li.appendChild(span);
+                    li.appendChild(btnPanel);
+                    listaUsuarios.appendChild(li);
+                });
+            }
+
+            inputBusquedaUsuarios.addEventListener('input', () => {
+                const texto = inputBusquedaUsuarios.value.toLowerCase();
+                const filtrados = datosUsuarios.filter(u =>
+                    u.user.toLowerCase().includes(texto) ||
+                    u.email.toLowerCase().includes(texto)
+                );
+                renderUsuarios(filtrados);
+            });
+
+
+            const inputBusqueda = document.getElementById('buscarObra');
+            const obrasOriginales = [];
+            const contenedor = document.getElementById('admin-works');
+
+            const observer = new MutationObserver(() => {
+                if (contenedor.children.length && obrasOriginales.length === 0) {
+                    for (let card of contenedor.children) {
+                        obrasOriginales.push(card.outerHTML);
+                    }
+                }
+            });
+
+            observer.observe(contenedor, { childList: true });
+
+            inputBusqueda.addEventListener('input', () => {
+                const texto = inputBusqueda.value.toLowerCase();
+                contenedor.innerHTML = obrasOriginales
+                    .filter(html => html.toLowerCase().includes(texto))
+                    .join('');
+            });
+        });
     </script>
-
-
-    <h2>Panel del Administrador</h2>
-
-    <nav>
-        <ul id="navLinks" class="nav justify-content-end"></ul>
-    </nav>
-
-    <div class="text-end mb-3">
-        <a href="create.html" class="btn btn-success">Agregar Nueva Obra</a>
-    </div>
-
-    <h4>Gestión de Obras</h4>
-    <div id="admin-works" class="row mt-3 mb-5"></div>
-
-    <h4>Gestión de Usuarios</h4>
-    <div id="admin-users" class="row mt-3">
-        <ul class="list-group" id="user-list"></ul>
-    </div>
 
     <script src="js/admin.js"></script>
 </body>

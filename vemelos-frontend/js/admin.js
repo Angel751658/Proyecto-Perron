@@ -121,29 +121,6 @@ if (location.pathname.includes('admin.html')) {
             });
         });
 
-    //     // Mostrar usuarios con botón para eliminar
-    //     fetch('http://localhost:5000/api/users', {
-    //         headers: { 'x-user-email': email }
-    //     })
-    //         .then(res => res.json())
-    //         .then(users => {
-    //             const userSection = document.createElement('div');
-    //             userSection.className = 'mt-5';
-    //             userSection.innerHTML = '<h3>Usuarios Registrados</h3><ul class="list-group mt-3"></ul>';
-    //             document.body.appendChild(userSection);
-
-    //             const ul = userSection.querySelector('ul');
-    //             users.forEach(u => {
-    //                 const li = document.createElement('li');
-    //                 li.className = 'list-group-item d-flex justify-content-between align-items-center';
-    //                 li.innerHTML = `<span>${u.user} (${u.email})</span>
-    //                                 <button class="btn btn-sm btn-danger" onclick="eliminarUsuario('${u._id}')">Eliminar</button>`;
-    //                 ul.appendChild(li);
-    //             });
-
-    //         });
-    // }
-
     // Eliminar usuario
     function eliminarUsuario(id) {
         if (!confirm('¿Eliminar este usuario?')) return;
