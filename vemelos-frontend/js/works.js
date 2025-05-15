@@ -28,7 +28,6 @@ if (location.pathname.includes('search.html')) {
                         </div>
                     </div>`;
                 });
-
         });
 }
 
@@ -59,8 +58,8 @@ if (location.pathname.includes('details.html')) {
                 </div>
             </div>
             `});
-
 }
+
 // Solo mostrar botón si no está ya en favoritos
 if (email) {
     fetch('http://localhost:5000/api/users/me', {
@@ -98,4 +97,12 @@ document.getElementById('favBtn')?.addEventListener('click', () => {
             window.location.href = 'favorites.html';
         });
 });
+
+
+
+
+
+
+
+
 

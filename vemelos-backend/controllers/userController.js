@@ -43,7 +43,7 @@ exports.loginUser = async (req, res) => {
     }
 };
 
-// Obtener todos los usuarios (opcional para admin)
+// Obtener usuarios 
 exports.getUsers = async (req, res) => {
     const usuarios = await User.find();
     res.json(usuarios);
@@ -53,29 +53,24 @@ exports.getUsers = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log("🔍 Intentando eliminar usuario con ID:", id);
 
-        // Validar ID de MongoDB
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            console.warn("⚠️ ID inválido");
             return res.status(400).json({ msg: 'ID de usuario inválido' });
         }
 
         const eliminado = await User.findByIdAndDelete(id);
 
         if (!eliminado) {
-            console.log("❌ Usuario no encontrado");
             return res.status(404).json({ msg: 'Usuario no encontrado' });
         }
 
-        console.log("✅ Usuario eliminado:", eliminado.email);
         res.json({ msg: 'Usuario eliminado correctamente' });
 
     } catch (err) {
-        console.error("❗ Error eliminando usuario:", err.message);
         res.status(500).json({ error: err.message });
     }
 };
+
 
 exports.setAdminRole = async (req, res) => {
     try {
@@ -154,3 +149,5 @@ exports.removeFavorite = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+

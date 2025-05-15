@@ -1,8 +1,7 @@
 const form = document.getElementById('createForm');
 const id = new URLSearchParams(location.search).get('id');
 
-if (form) {
-    // Si estamos en modo edición (edit.html?id=...)
+if (form) {    
     if (id) {
         // Cargar datos existentes
         fetch(`http://localhost:5000/api/works/${id}`)
@@ -172,7 +171,6 @@ if (location.pathname.includes('admin.html')) {
             });
     }
 
-
     // Mostrar usuarios con botón "Eliminar" y "Hacer Admin" o "Quitar Admin"
     fetch('http://localhost:5000/api/users', {
         headers: { 'x-user-email': localStorage.getItem('userEmail') }
@@ -181,14 +179,15 @@ if (location.pathname.includes('admin.html')) {
         .then(users => {
             const currentUserEmail = localStorage.getItem('userEmail');
 
-            const userSection = document.createElement('div');
-            userSection.className = 'mt-5';
-            userSection.innerHTML = '<h3>Usuarios Registrados</h3><ul class="list-group mt-3"></ul>';
-            document.body.appendChild(userSection);
+            const userListContainer = document.getElementById('user-list');
+            const userSectionTitle = document.createElement('h3');
+            userSectionTitle.textContent = 'Usuarios Registrados';
+            userSectionTitle.className = 'mb-3';
+
+            userListContainer.parentElement.insertBefore(userSectionTitle, userListContainer);
 
             const ul = userSection.querySelector('ul');
             users.forEach(u => {
-                // No mostrar al usuario actual
                 if (u.email === currentUserEmail) return;
 
                 const li = document.createElement('li');
@@ -199,7 +198,6 @@ if (location.pathname.includes('admin.html')) {
 
                 const btnPanel = document.createElement('div');
 
-                // Solo permitir eliminar si NO es admin
                 if (!u.isAdmin) {
                     const btnEliminar = document.createElement('button');
                     btnEliminar.textContent = 'Eliminar';
