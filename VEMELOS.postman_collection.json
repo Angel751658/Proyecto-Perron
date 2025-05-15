@@ -1,0 +1,374 @@
+{
+	"info": {
+		"_postman_id": "5ad2b3b8-a46e-4d72-967b-4f3588d25d35",
+		"name": "VEMELOS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43083822"
+	},
+	"item": [
+		{
+			"name": "Registrar usuario",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"user\": \"Usuario\",\n  \"email\": \"nuevo@correo\",\n  \"password\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Iniciar sesión",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"nuevo@correo.com\",\n  \"password\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener usuario actual",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-user-email",
+						"value": "nuevo@correo.com"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/users/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar obras",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/works",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"works"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Añadir obra a favoritos",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-user-email",
+						"value": "nuevo@correo.com"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"obraId\": \"682224139ab473c066686933\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/favorites/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"favorites",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Quitar obra de favoritos",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-user-email",
+						"value": "nuevo@correo.com"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"obraId\": \"682224139ab473c066686933\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/favorites/remove",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"favorites",
+						"remove"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Asignar rol admin",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-user-email",
+						"value": "admin@veme.com"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/users/682568abb57dc8f7d2cfbe76/admin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"682568abb57dc8f7d2cfbe76",
+						"admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Revocar rol admin",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-user-email",
+						"value": "admin@veme.com"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/users/682568abb57dc8f7d2cfbe76/revoke",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"682568abb57dc8f7d2cfbe76",
+						"revoke"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar usuario",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-user-email",
+						"value": "admin@veme.com"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/users/682568abb57dc8f7d2cfbe76",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"682568abb57dc8f7d2cfbe76"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear obra",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-user-email",
+						"value": "admin@veme.com",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"titulo\": \"Obra nueva\",\n  \"descripcion\": \"Descripcion breve\",\n  \"imagen\": \"https://example.com/imagen.jpg\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/works",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"works"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Editar obra",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-user-email",
+						"value": "admin@veme.com",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"titulo\": \"Titulo 2\",\n  \"descripcion\": \"Otra descripcion\",\n  \"imagen\": \"https://example.com/nueva-imagen.jpg\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/works/68256c70b57dc8f7d2cfbeb5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"works",
+						"68256c70b57dc8f7d2cfbeb5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar obra",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-user-email",
+						"value": "admin@veme.com",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/works/68256c70b57dc8f7d2cfbeb5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"works",
+						"68256c70b57dc8f7d2cfbeb5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
