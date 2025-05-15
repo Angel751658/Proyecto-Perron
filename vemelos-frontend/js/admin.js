@@ -1,7 +1,7 @@
 const form = document.getElementById('createForm');
 const id = new URLSearchParams(location.search).get('id');
 
-if (form) {    
+if (form) {
     if (id) {
         // Cargar datos existentes
         fetch(`http://localhost:5000/api/works/${id}`)
@@ -108,8 +108,10 @@ if (location.pathname.includes('admin.html')) {
             const cont = document.getElementById('admin-works');
             obras.forEach(o => {
                 cont.innerHTML += `
-                <div class="col-md-4 mb-3">
-                    <div class="card">
+                <div class="col-md-3 mb-2">
+                    <div class="card h-5">
+                    <img src="${o.imagenUrl}" class="card-img-top" alt="${o.titulo}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
                     <div class="card-body">
                         <h5>${o.titulo}</h5>
                         <a href="edit.html?id=${o._id}" class="btn btn-sm btn-outline-warning me-2">Editar</a>
